@@ -24,8 +24,8 @@ pip install matplotlib
 search-lab/
 ├── .gitignore                        # 忽略 __pycache__/ 与 *.pyc，放行 png 与 metrics.csv
 ├── README.md                         # 项目说明文档（本文件）：环境、目录、运行顺序与实验配置
-├── src/                              # 核心算法实现（纯标准库）
-│   ├── __init__.py                   # 包标记，无逻辑
+├── src/                              # 核心算法实现
+│   ├── __init__.py                  
 │   ├── astar.py                      # 通用 A* 引擎：堆元素 (f,h,r,c,g)、四计数口径、可重开与启发函数参数
 │   ├── q1_maze.py                    # 题目一入口：迷宫寻路，单位代价调用通用 A*
 │   ├── q2_weighted.py                # 题目二入口：加权地形最短路，终点进入代价为 0，无解返回 -1
@@ -37,7 +37,7 @@ search-lab/
 │   ├── reporting.py                  # 统一绘图样式与配色、caption 收集、metrics.csv 写入器（列与单位校验）
 │   ├── run_experiments.py            # 规定动作 Q1-Q4 入口：运行实验、落盘指标、生成图表与 report snapshot 块
 │   └── extensions.py                 # 拓展实验 A/B/C/K：不一致启发、耗时对照、代价敏感性、不可采纳启发
-└── report_assets/                    # 运行脚本后自动生成的实验产出
+└── report_assets/                    # 实验产出
     ├── metrics.csv                   # 全部实验指标数据表，固定 8 列 Schema
     └── figures/                      # 含10 张报告用 png 图（p2_ / p3_ / p4_ / p5_ 前缀对应报告页码）
 ```
