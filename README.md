@@ -65,6 +65,60 @@ python scripts/run_experiments.py
 
 该命令重新生成 `report_assets/metrics.csv` 与 `report_assets/figures/` 下全部 10 张图，并在终端末尾打印图注候选（`--- captions ---`）与报告抄数用的数据块（`--- report snapshot ---`）。
 
+**第三步（可选）：自定义自由输入测试。**
+
+除了运行预设的测试用例，各题的入口函数均支持接收任意合法格式的输入，以满足自由测试的需求。进入 Python 交互模式（终端输入 `python`）后，可直接导入对应模块并传入自定义数据。各题入口签名与合法输入格式如下：
+
+**Q1 迷宫寻路** — `solve_q1(start, goal, grid)`
+
+```python
+>>> from src.q1_maze import solve_q1
+>>> grid = [['S', '.', '.'], ['.', 'X', '.'], ['.', '.', 'E']]
+>>> solve_q1((0, 0), (2, 2), grid)
+[(0, 0), (0, 1), (0, 2), (1, 2), (2, 2)]
+```
+
+`grid` 为字符串二维列表：`'S'`/`'E'` 标记起止点，`'.'` 可通行，`'X'` 为障碍；四连通，每步代价恒为 1。
+
+**Q2 加权地形** — `solve_q2(start, goal, grid)`
+
+```python
+>>> from src.q2_weighted import solve_q2
+>>> grid = [['S', 2, 1], [3, 'X', 1], [1, 1, 'E']]
+>>> solve_q2((0, 0), (2, 2), grid)
+4
+```
+
+`grid` 可为字符串或整数混合的二维列表：`'S'`/`'E'`/数字格进入代价等于该数字（`'S'` 视作 1，`'E'` 视作 0），`'X'` 不可通行；不可达时返回 `-1`。
+
+**Q3 博弈树** — `solve_q3(tree)`
+
+```python
+>>> from src.q3_alphabeta import solve_q3
+>>> tree = {
+...     "children": [
+...         {"children": [{"children": [{"value": 3}, {"value": 5}]}]},
+...         {"children": [{"children": [{"value": 2}, {"value": 9}]}]}
+...     ]
+... }
+>>> solve_q3(tree)
+9
+```
+
+`tree` 可传入 `TreeNode` 对象或嵌套字典；字典根层可用 `"tree_structure"` 键包裹，也可直接传根节点字典。`tree_from_dict` 仅识别 `"value"`（叶子）与 `"children"`（内部节点），`"is_maximizing_player"` 字段为注释性，**alpha_beta 完全按深度从根开始交替**——根层固定为 MAX，逐层 MIN/MAX 交替。
+
+**Q4 宝藏分配** — `solve_q4(grid, treasures, H)`
+
+```python
+>>> from src.q4_treasure import solve_q4
+>>> grid = [['A', 1, 'T1'], ['T2', 1, 'T3'], ['T4', 1, 'B']]
+>>> treasures = {"T1": 5, "T2": 4, "T3": 3, "T4": 2}
+>>> solve_q4(grid, treasures, 3)
+{'best_target': 'T1', 'best_value': 2}
+```
+
+`grid` 必须同时包含 `'A'`、`'B'`、`'T1'..'T4'` 共 6 个标记（`build_distance_matrix` 内部硬编码了这 6 个名字，缺一则报 KeyError）；数字格为进入代价，`'A'`/`'B'`/`'T*'` 默认为 1，`'X'` 不可通行。`treasures` 是 `{宝藏名: 价值}` 字典。`H` 为搜索深度，函数返回 `{"best_target": ..., "best_value": ...}`。也可传入 `enter_cost_overrides={(row, col): 新代价}` 测试非对称矩阵。
+
 ## 4. 实验配置
 
 - **核心算法架构设计**
